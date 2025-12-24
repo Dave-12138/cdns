@@ -8,7 +8,7 @@ on:
     
   # 定时器
   schedule:
-    - cron: '0,30 3-13 * * *'
+    - cron: '5 4,11-13 * * *'
 
   # 手动
   workflow_dispatch:
