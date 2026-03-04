@@ -10,6 +10,7 @@ mw.hook('InPageEdit.ready').add(function (ipe) {
         inject: ['preferences'],
         apply: function (ctx) {
             ctx.preferences.setMany({
+                "analytics.enabled": true,
                 "pluginStore.plugins": [
                     {
                         "registry": "https://registry.ipe.wiki/registry.v1.json",
@@ -20,6 +21,9 @@ mw.hook('InPageEdit.ready').add(function (ipe) {
                     "https://registry.ipe.wiki/registry.v1.json"
                 ],
                 "quickEdit.editSummary": "[IPEN] ",
+                "quickMove.reason": "[IPEN:Move] ",
+                "quickRedirect.reason": "[IPEN:Redirect] ",
+                "quickUpload.summary": "[IPEN:Upload] ",
                 "toolboxAlwaysShow": true
             })
         },
