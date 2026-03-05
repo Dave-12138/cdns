@@ -32,23 +32,20 @@ mw.hook('InPageEdit.ready').add(function (ipe) {
         },
     })
     function summaryParser(template, payload) {
-        return template.replace(/\$\{(\w+?)\}/g, (_, k) => {
+        return template?.replace(/\$\{(\w+?)\}/g, (_, k) => {
             return payload[k] ?? ""
-        })
+        }) ?? "[IPEN:edit]"
     }
     ipe.plugin({
         inject: ['preferences'/* ,'inArticleLinks' */],
         name: "format-edit-summary",
-        PreferencesSchema: Schema.object({
-            "formatEditSummary.template": Schema.string().description('编辑摘要模板'),
+        ConfigSchema : Schema.object({
+            "formatEditSummary.template": Schema.string().description('编辑摘要模板').default('[IPEN] /* ${section} */ '),
         }),
-        PreferencesDefaults: {
-            "formatEditSummary.template": '[IPEN] /* ${section} */ ',
-        },
         apply: async function (ctx) {
             ctx.preferences.defineCategory({
                 name: "format-edit-summary",
-                label: "FormatEditSummary",
+                label: "FormatEditSummary", autoGenerateForm: true,
                 index: 15
             })
             const template = await ctx.preferences.get("formatEditSummary.template");
@@ -59,7 +56,7 @@ mw.hook('InPageEdit.ready').add(function (ipe) {
                     const sectionName = a.title?.replace(/^.*?：/, '');
                     if (a.dataset.ipeEditMounted) {
                         const qeb = a.nextElementSibling;
-                        if (qeb.classList.contains('ipe-quick-edit')) {
+                        if (qeb.classList.contains('ipe-quick-edit') && qeb.dataset.section !== void 0) {
                             console.log(qeb);
                             qeb.dataset.editSummary = summaryParser(template, { section: sectionName })
                         }
