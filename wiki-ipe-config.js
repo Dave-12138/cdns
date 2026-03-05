@@ -7,6 +7,7 @@
 //     })
 // )
 import { Schema } from "https://cdn.jsdelivr.net/npm/@inpageedit/core/dist/index.js";
+// const { Schema } = await import("https://cdn.jsdelivr.net/npm/@inpageedit/core/dist/index.js");
 mw.hook('InPageEdit.ready').add(function (ipe) {
     ipe.plugin({
         inject: ['preferences'],
@@ -39,19 +40,23 @@ mw.hook('InPageEdit.ready').add(function (ipe) {
     ipe.plugin({
         inject: ['preferences'/* ,'inArticleLinks' */],
         name: "format-edit-summary",
-        ConfigSchema : Schema.object({
-            "formatEditSummary.template": Schema.string().description('编辑摘要模板').default('[IPEN] /* ${section} */ '),
-        }),
         apply: async function (ctx) {
             ctx.preferences.defineCategory({
                 name: "format-edit-summary",
                 label: "FormatEditSummary", autoGenerateForm: true,
                 index: 15
             })
-            const template = await ctx.preferences.get("formatEditSummary.template");
+            ctx.preferences.registerCustomConfig(
+                'format-edit-summary',
+                Schema.object({
+                    "formatEditSummary.template": Schema.string().description('编辑摘要模板').default('[IPEN] /* ${section} */ '),
+                }),
+                "format-edit-summary"
+            )
             ctx.on('in-article-links/anchor-parsed', async (paylo) => {
                 /**@type {HTMLAnchorElement} */
                 const a = paylo.anchor;
+                const template = await ctx.preferences.get("formatEditSummary.template");
                 setTimeout(() => {
                     const sectionName = a.title?.replace(/^.*?：/, '');
                     if (a.dataset.ipeEditMounted) {
