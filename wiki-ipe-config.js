@@ -38,7 +38,7 @@ mw.hook('InPageEdit.ready').add(function (ipe) {
         }) ?? "[IPEN:edit]"
     }
     ipe.plugin({
-        inject: ['preferences'/* ,'inArticleLinks' */],
+        inject: ['preferences', 'quickEdit'/* ,'inArticleLinks' */],
         name: "format-edit-summary",
         apply: async function (ctx) {
             ctx.preferences.defineCategory({
@@ -64,6 +64,10 @@ mw.hook('InPageEdit.ready').add(function (ipe) {
                         if (qeb.classList.contains('ipe-quick-edit') && qeb.dataset.section !== void 0) {
                             console.log(qeb);
                             qeb.dataset.editSummary = summaryParser(template, { section: sectionName })
+                            qeb.onclick = function (e) {
+                                e.preventDefault();
+                                ctx.quickEdit.showModal({ ...this.dataset });
+                            }
                         }
                     }
                 }, 10);
