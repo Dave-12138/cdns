@@ -62,7 +62,7 @@ mw.hook('InPageEdit.ready').add(function (ipe) {
                     if (a.dataset.ipeEditMounted) {
                         const qeb = a.nextElementSibling;
                         if (qeb.classList.contains('ipe-quick-edit') && qeb.dataset.section !== void 0) {
-                            console.log(qeb);
+                            // console.log(qeb);
                             qeb.dataset.editSummary = summaryParser(template, { section: sectionName })
                             qeb.onclick = function (e) {
                                 e.preventDefault();
