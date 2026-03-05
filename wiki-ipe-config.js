@@ -31,6 +31,11 @@ mw.hook('InPageEdit.ready').add(function (ipe) {
             })
         },
     })
+    function summaryParser(template, payload) {
+        return template.replace(/\$\{(\w+?)\}/g, (_, k) => {
+            return payload[k] ?? ""
+        })
+    }
     ipe.plugin({
         inject: ['preferences'/* ,'inArticleLinks' */],
         name: "format-edit-summary",
@@ -40,20 +45,25 @@ mw.hook('InPageEdit.ready').add(function (ipe) {
         PreferencesDefaults: {
             "formatEditSummary.template": '[IPEN] /* ${section} */ ',
         },
-        apply: function (ctx) {
+        apply: async function (ctx) {
             ctx.preferences.defineCategory({
                 name: "format-edit-summary",
+                label: "FormatEditSummary",
                 index: 15
             })
+            const template = await ctx.preferences.get("formatEditSummary.template");
             ctx.on('in-article-links/anchor-parsed', async (paylo) => {
                 /**@type {HTMLAnchorElement} */
                 const a = paylo.anchor;
-                const sectionName = a.title?.replace(/^.*?：/, '');
-                console.log("章节：", sectionName, a);
                 setTimeout(() => {
-                    const qeb = a.querySelector('+a.ipe-quick-edit');
-                    console.log(qeb);
-
+                    const sectionName = a.title?.replace(/^.*?：/, '');
+                    if (a.dataset.ipeEditMounted) {
+                        const qeb = a.nextElementSibling;
+                        if (qeb.classList.contains('ipe-quick-edit')) {
+                            console.log(qeb);
+                            qeb.dataset.editSummary = summaryParser(template, { section: sectionName })
+                        }
+                    }
                 }, 10);
             })
         },
