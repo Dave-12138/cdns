@@ -39,7 +39,13 @@ jobs:
       - name: 查询并合并数据
         run: node fetch-calendar.cjs
         continue-on-error: true
-      - name: 检查
+      - name: 检查并下载备份
+        id: download_backup
+        run: |
+          if [ ! -f "miyoushe-calendar.json" ]; then
+            curl -o miyoushe-calendar.json https://dave-12138.github.io/cdns/miyoushe-calendar.json
+          fi
+      - name: 检查文件
         id: file_check
         run: |
           if [ -f "miyoushe-calendar.json" ]; then
@@ -50,7 +56,7 @@ jobs:
       # 上传要用的部分用于 pages
       - name: 上传 artifact
         if: steps.file_check.outputs.exists == 'true'
-        uses: actions/upload-pages-artifact@v3
+        uses: actions/upload-pages-artifact@v4  
         with:
           path: '.'
 
