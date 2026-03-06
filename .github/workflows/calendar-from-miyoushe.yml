@@ -43,6 +43,7 @@ jobs:
         id: download_backup
         run: |
           if [ ! -f "miyoushe-calendar.json" ]; then
+            echo "进入备份下载逻辑，开始从备份URL下载文件"
             curl -o miyoushe-calendar.json https://dave-12138.github.io/cdns/miyoushe-calendar.json
           fi
       - name: 检查文件
