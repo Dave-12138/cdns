@@ -8,48 +8,27 @@
 // )
 import { Schema } from "https://cdn.jsdelivr.net/npm/@inpageedit/core/dist/index.js";
 // const { Schema } = await import("https://cdn.jsdelivr.net/npm/@inpageedit/core/dist/index.js");
+
+function summaryParser(template, payload) {
+    return template?.replace(/\$\{(\w+?)\}/g, (_, k) => {
+        return payload[k] ?? ""
+    }) ?? "[IPEN:edit]"
+}
 mw.hook('InPageEdit.ready').add(function (ipe) {
-    ipe.plugin({
-        inject: ['preferences'],
-        name: "sync-preferences",
-        apply: function (ctx) {
-            ctx.preferences.setMany({
-                "analytics.enabled": true,
-                "pluginStore.plugins": [
-                    {
-                        "registry": "https://registry.ipe.wiki/registry.v1.json",
-                        "id": "code-mirror"
-                    }
-                ],
-                "pluginStore.registries": [
-                    "https://registry.ipe.wiki/registry.v1.json"
-                ],
-                "quickEdit.editSummary": "[IPEN] ",
-                "quickMove.reason": "[IPEN:Move] ",
-                "quickRedirect.reason": "[IPEN:Redirect] ",
-                "quickUpload.summary": "[IPEN:Upload] ",
-                "toolboxAlwaysShow": true
-            })
-        },
-    })
-    function summaryParser(template, payload) {
-        return template?.replace(/\$\{(\w+?)\}/g, (_, k) => {
-            return payload[k] ?? ""
-        }) ?? "[IPEN:edit]"
-    }
     ipe.plugin({
         inject: ['preferences', 'quickEdit'/* ,'inArticleLinks' */],
         name: "format-edit-summary",
         apply: async function (ctx) {
             ctx.preferences.defineCategory({
                 name: "format-edit-summary",
-                label: "FormatEditSummary", autoGenerateForm: true,
+                label: "FormatEditSummary",
+                autoGenerateForm: true,
                 index: 15
             })
             ctx.preferences.registerCustomConfig(
                 'format-edit-summary',
                 Schema.object({
-                    "formatEditSummary.template": Schema.string().description('编辑摘要模板').default('[IPEN] /* ${section} */ '),
+                    "formatEditSummary.template": Schema.string().description('编辑摘要模板').default('[IPE-Next] /* ${section} */ '),
                 }),
                 "format-edit-summary"
             )
@@ -71,6 +50,64 @@ mw.hook('InPageEdit.ready').add(function (ipe) {
                         }
                     }
                 }, 10);
+            })
+        },
+    })
+    ipe.plugin({
+        inject: ['preferences'],
+        name: "sync-preferences",
+        apply: function (ctx) {
+            ctx.preferences.setMany({
+                "analytics.enabled": true,
+                "pluginStore.plugins": [
+                    {
+                        "registry": "https://registry.ipe.wiki/registry.v1.json",
+                        "id": "code-mirror"
+                    }
+                ],
+                "pluginStore.registries": [
+                    "https://registry.ipe.wiki/registry.v1.json"
+                ],
+                "formatEditSummary.template": "[IPEN] /* ${section} */ ",
+                "quickEdit.editSummary": "[IPEN] ",
+                "quickMove.reason": "[IPEN:Move] ",
+                "quickRedirect.reason": "[IPEN:Redirect] ",
+                "quickUpload.summary": "[IPEN:Upload] ",
+                "toolboxAlwaysShow": true
+            })
+        },
+    })
+    ipe.plugin({
+        inject: ['toolbox', 'modal'],
+        name: "quick-prefix",
+        apply: function (ctx) {
+            ctx.toolbox.addButton({
+                id: 'quick-prefix',
+                icon: '⬅️',
+                tooltip: 'Special:前缀索引',
+                onClick: () => {
+                    const pageName = window.mw?.config.get('wgPageName')
+
+                    if (pageName) {
+                        const div = document.createElement('div');
+
+                        fetch(`/api.php?${new URLSearchParams({
+                            action: 'parse',
+                            format: 'json',
+                            contentmodel: 'wikitext',
+                            text: `{{Special:前缀索引/${pageName}}}`
+                        })}`).then(e => e.json()).then(t => div.innerHTML = t.parse.text['*'])
+                        const md = ctx.modal.createObject({
+                            title: "Special:前缀索引/" + pageName,
+                            content: div,
+                            className: "quick-prefix",
+                            sizeClass: 'smallToMedium',
+                            center: true
+                        }).init();
+                        md.show();
+
+                    }
+                }
             })
         },
     })
