@@ -85,6 +85,8 @@ mw.hook('InPageEdit.ready').add(function (ipe) {
                 id: 'quick-prefix',
                 icon: '⬅️',
                 tooltip: 'Special:前缀索引',
+                group: "group2",
+                index: 8,
                 onClick: () => {
                     const pageName = window.mw?.config.get('wgPageName')
 
