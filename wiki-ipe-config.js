@@ -109,7 +109,7 @@ mw.hook('InPageEdit.ready').add(function (ipe) {
                         divModalContent.appendChild(divPrefix);
                         divModalContent.appendChild(divLink);
                         const md = ctx.modal.createObject({
-                            title: "Special:前缀索引/" + pageName,
+                            title: "Special&" + pageName,
                             content: divModalContent,
                             className: "quick-special",
                             sizeClass: 'mediumToLarge',
