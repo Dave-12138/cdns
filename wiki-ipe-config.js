@@ -79,31 +79,40 @@ mw.hook('InPageEdit.ready').add(function (ipe) {
     })
     ipe.plugin({
         inject: ['toolbox', 'modal'],
-        name: "quick-prefix",
+        name: "quick-special",
         apply: function (ctx) {
+            const pageName = window.mw?.config.get('wgPageName')
             ctx.toolbox.addButton({
-                id: 'quick-prefix',
+                id: 'quick-special',
                 icon: '⬅️',
-                tooltip: 'Special:前缀索引',
+                tooltip: '前缀与嵌入',
                 group: "group2",
                 index: 8,
                 onClick: () => {
-                    const pageName = window.mw?.config.get('wgPageName')
 
                     if (pageName) {
-                        const div = document.createElement('div');
-
+                        const divPrefix = document.createElement('div');
+                        const divLink = document.createElement('div');
                         fetch(`/api.php?${new URLSearchParams({
                             action: 'parse',
                             format: 'json',
                             contentmodel: 'wikitext',
                             text: `{{Special:前缀索引/${pageName}}}`
-                        })}`).then(e => e.json()).then(t => div.innerHTML = t.parse.text['*'])
+                        })}`).then(e => e.json()).then(t => divPrefix.innerHTML = t.parse.text['*'])
+                        fetch(`/api.php?${new URLSearchParams({
+                            action: 'parse',
+                            format: 'json',
+                            contentmodel: 'wikitext',
+                            text: `{{Special:链入页面/${pageName}|limit=50|hidelinks=1}}`
+                        })}`).then(e => e.json()).then(t => divLink.innerHTML = t.parse.text['*'])
+                        const divModalContent = document.createElement('div');
+                        divModalContent.appendChild(divPrefix);
+                        divModalContent.appendChild(divLink);
                         const md = ctx.modal.createObject({
                             title: "Special:前缀索引/" + pageName,
-                            content: div,
-                            className: "quick-prefix",
-                            sizeClass: 'smallToMedium',
+                            content: divModalContent,
+                            className: "quick-special",
+                            sizeClass: 'mediumToLarge',
                             center: true
                         }).init();
                         md.show();
