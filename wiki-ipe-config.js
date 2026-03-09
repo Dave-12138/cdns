@@ -82,6 +82,13 @@ mw.hook('InPageEdit.ready').add(function (ipe) {
         name: "quick-special",
         apply: function (ctx) {
             const pageName = window.mw?.config.get('wgPageName')
+            const styleEl=document.createElement('style');
+            styleEl.innerHTML=`.quick-special-div{display:flex;} .quick-special-div>div{flex:1 1 50%}`
+            document.head.appendChild(styleEl);
+            ctx.on('dispose',()=>{
+                styleEl.remove();
+                ctx.toolbox.removeButton('quick-special')
+            });
             ctx.toolbox.addButton({
                 id: 'quick-special',
                 icon: '⬅️',
@@ -106,6 +113,7 @@ mw.hook('InPageEdit.ready').add(function (ipe) {
                             text: `{{Special:链入页面/${pageName}|limit=50|hidelinks=1}}`
                         })}`).then(e => e.json()).then(t => divLink.innerHTML = t.parse.text['*'])
                         const divModalContent = document.createElement('div');
+                        divModalContent.classList.add('quick-special-div');
                         divModalContent.appendChild(divPrefix);
                         divModalContent.appendChild(divLink);
                         const md = ctx.modal.createObject({
