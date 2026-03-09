@@ -82,13 +82,14 @@ mw.hook('InPageEdit.ready').add(function (ipe) {
         name: "quick-special",
         apply: function (ctx) {
             const pageName = window.mw?.config.get('wgPageName')
-            const styleEl=document.createElement('style');
-            styleEl.innerHTML=`.quick-special-div{display:flex;} .quick-special-div>div{flex:1 1 50%}`
+            const styleEl = document.createElement('style');
+            styleEl.innerHTML = `.quick-special-div{display:flex;} .quick-special-div>div{flex:1 1 50%}`
             document.head.appendChild(styleEl);
-            ctx.on('dispose',()=>{
+            ctx.on('dispose', () => {
                 styleEl.remove();
                 ctx.toolbox.removeButton('quick-special')
             });
+            const caches = { prefix: "", link: "" }
             ctx.toolbox.addButton({
                 id: 'quick-special',
                 icon: '⬅️',
@@ -100,18 +101,27 @@ mw.hook('InPageEdit.ready').add(function (ipe) {
                     if (pageName) {
                         const divPrefix = document.createElement('div');
                         const divLink = document.createElement('div');
-                        fetch(`/api.php?${new URLSearchParams({
-                            action: 'parse',
-                            format: 'json',
-                            contentmodel: 'wikitext',
-                            text: `{{Special:前缀索引/${pageName}}}`
-                        })}`).then(e => e.json()).then(t => divPrefix.innerHTML = t.parse.text['*'])
-                        fetch(`/api.php?${new URLSearchParams({
-                            action: 'parse',
-                            format: 'json',
-                            contentmodel: 'wikitext',
-                            text: `{{Special:链入页面/${pageName}|limit=50|hidelinks=1}}`
-                        })}`).then(e => e.json()).then(t => divLink.innerHTML = t.parse.text['*'])
+                        if (!caches.prefix) {
+
+                            fetch(`/api.php?${new URLSearchParams({
+                                action: 'parse',
+                                format: 'json',
+                                contentmodel: 'wikitext',
+                                text: `{{Special:前缀索引/${pageName}}}`
+                            })}`).then(e => e.json()).then(t => divPrefix.innerHTML = caches.prefix = t.parse.text['*'])
+                        } else {
+                            divPrefix.innerHTML = caches.prefix;
+                        }
+                        if (!caches.link) {
+                            fetch(`/api.php?${new URLSearchParams({
+                                action: 'parse',
+                                format: 'json',
+                                contentmodel: 'wikitext',
+                                text: `{{Special:链入页面/${pageName}|limit=50|hidelinks=1}}`
+                            })}`).then(e => e.json()).then(t => divLink.innerHTML = caches.link = t.parse.text['*'])
+                        } else {
+                            divLink.innerHTML = caches.link;
+                        }
                         const divModalContent = document.createElement('div');
                         divModalContent.classList.add('quick-special-div');
                         divModalContent.appendChild(divPrefix);
