@@ -98,7 +98,7 @@ mw.hook('InPageEdit.ready').add(function (ipe) {
                 index: 8,
                 onClick: () => {
 
-                    if (pageName) {
+                    if (pageName && !pageName.startsWith("Special:")) {
                         const divPrefix = document.createElement('div');
                         const divLink = document.createElement('div');
                         if (!caches.prefix) {
