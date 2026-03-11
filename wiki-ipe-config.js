@@ -124,8 +124,9 @@ mw.hook('InPageEdit.ready').add(function (ipe) {
                         }
                         const divModalContent = document.createElement('div');
                         divModalContent.classList.add('quick-special-div');
-                        divModalContent.appendChild(divPrefix);
-                        divModalContent.appendChild(divLink);
+                        divModalContent.innerHTML=`<div class="quick-prefix"><h3>Special:前缀索引</h3></div><div class="quick-link"><h3>Special:链入页面</h3></div>`
+                        divModalContent.querySelector('.quick-prefix').appendChild(divPrefix);
+                        divModalContent.querySelector('.quick-link').appendChild(divLink);
                         const md = ctx.modal.createObject({
                             title: "Special&" + pageName,
                             content: divModalContent,
