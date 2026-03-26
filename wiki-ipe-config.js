@@ -7,7 +7,7 @@
 //     })
 // )
 import { Schema } from "https://cdn.jsdelivr.net/npm/@inpageedit/core/dist/index.js";
-// const { Schema } = await import("https://cdn.jsdelivr.net/npm/@inpageedit/core/dist/index.js");
+// const { Schema } = await import("https://proxy.dave-12138.cn/https://cdn.jsdelivr.net/npm/@inpageedit/core/dist/index.js");
 
 function summaryParser(template, payload) {
     return template?.replace(/\$\{(\w+?)\}/g, (_, k) => {
@@ -59,16 +59,20 @@ mw.hook('InPageEdit.ready').add(function (ipe) {
         apply: function (ctx) {
             ctx.preferences.setMany({
                 "analytics.enabled": true,
+                "formatEditSummary.template": "[IPEN] /* ${section} */ ",
                 "pluginStore.plugins": [
                     {
                         "registry": "https://registry.ipe.wiki/registry.v1.json",
                         "id": "code-mirror"
+                    },
+                    {
+                        "registry": "https://registry.ipe.wiki/registry.v1.json",
+                        "id": "april-fool-2023"
                     }
                 ],
                 "pluginStore.registries": [
                     "https://registry.ipe.wiki/registry.v1.json"
                 ],
-                "formatEditSummary.template": "[IPEN] /* ${section} */ ",
                 "quickEdit.editSummary": "[IPEN] ",
                 "quickMove.reason": "[IPEN:Move] ",
                 "quickRedirect.reason": "[IPEN:Redirect] ",
@@ -92,7 +96,7 @@ mw.hook('InPageEdit.ready').add(function (ipe) {
             const caches = { prefix: "", link: "" }
             ctx.toolbox.addButton({
                 id: 'quick-special',
-                icon: '⬅️',
+                icon: 'S',
                 tooltip: '前缀与嵌入',
                 group: "group2",
                 index: 8,
