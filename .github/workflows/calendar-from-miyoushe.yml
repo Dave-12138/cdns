@@ -28,11 +28,11 @@ jobs:
     steps:
       # 取当前版本
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
       - name: 配置 pages
-        uses: actions/configure-pages@v5
+        uses: actions/configure-pages@v6
       - name: Use Node.js 
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v6
         with:
           node-version: 20
       # 拿数据
@@ -57,7 +57,7 @@ jobs:
       # 上传要用的部分用于 pages
       - name: 上传 artifact
         if: steps.file_check.outputs.exists == 'true'
-        uses: actions/upload-pages-artifact@v4  
+        uses: actions/upload-pages-artifact@v4.0.0  
         with:
           path: '.'
 
@@ -71,4 +71,4 @@ jobs:
     steps:
       - name: 发布 GitHub Pages
         id: deployment
-        uses: actions/deploy-pages@v4
+        uses: actions/deploy-pages@v5
