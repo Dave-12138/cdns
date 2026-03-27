@@ -65,10 +65,6 @@ mw.hook('InPageEdit.ready').add(function (ipe) {
                         "registry": "https://registry.ipe.wiki/registry.v1.json",
                         "id": "code-mirror"
                     },
-                    {
-                        "registry": "https://registry.ipe.wiki/registry.v1.json",
-                        "id": "april-fool-2023"
-                    }
                 ],
                 "pluginStore.registries": [
                     "https://registry.ipe.wiki/registry.v1.json"
@@ -89,13 +85,14 @@ mw.hook('InPageEdit.ready').add(function (ipe) {
             const styleEl = document.createElement('style');
             styleEl.innerHTML = `.quick-special-div{display:flex;} .quick-special-div>div{flex:1 1 50%}`
             document.head.appendChild(styleEl);
+            const btnId = 'quick-special';
             ctx.on('dispose', () => {
                 styleEl.remove();
-                ctx.toolbox.removeButton('quick-special')
+                ctx.toolbox.removeButton(btnId)
             });
             const caches = { prefix: "", link: "" }
             ctx.toolbox.addButton({
-                id: 'quick-special',
+                id: btnId,
                 icon: 'S',
                 tooltip: '前缀与嵌入',
                 group: "group2",
@@ -128,7 +125,7 @@ mw.hook('InPageEdit.ready').add(function (ipe) {
                         }
                         const divModalContent = document.createElement('div');
                         divModalContent.classList.add('quick-special-div');
-                        divModalContent.innerHTML=`<div class="quick-prefix"><h3>Special:前缀索引</h3></div><div class="quick-link"><h3>Special:链入页面</h3></div>`
+                        divModalContent.innerHTML = `<div class="quick-prefix"><a href="/Special:前缀索引/${pageName}"><h3>Special:前缀索引</h3></a></div><div class="quick-link"><a href="/Special:链入页面/${pageName}"><h3>Special:链入页面</h3></a></div>`
                         divModalContent.querySelector('.quick-prefix').appendChild(divPrefix);
                         divModalContent.querySelector('.quick-link').appendChild(divLink);
                         const md = ctx.modal.createObject({
