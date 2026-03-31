@@ -6,7 +6,7 @@
 //         type: 'module',
 //     })
 // )
-import { Schema } from "https://cdn.jsdelivr.net/npm/@inpageedit/core/dist/index.js";
+import { Schema } from "https://proxy.dave-12138.cn/https://cdn.jsdelivr.net/npm/@inpageedit/core/dist/index.js";
 // const { Schema } = await import("https://proxy.dave-12138.cn/https://cdn.jsdelivr.net/npm/@inpageedit/core/dist/index.js");
 
 function summaryParser(template, payload) {
@@ -88,7 +88,7 @@ mw.hook('InPageEdit.ready').add(function (ipe) {
             const btnId = 'quick-special';
             ctx.on('dispose', () => {
                 styleEl.remove();
-                ctx.toolbox.removeButton(btnId)
+                ctx.toolbox.removeButton(btnId);
             });
             const caches = { prefix: "", link: "" }
             ctx.toolbox.addButton({
