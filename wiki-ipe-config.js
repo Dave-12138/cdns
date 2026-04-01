@@ -65,6 +65,10 @@ mw.hook('InPageEdit.ready').add(function (ipe) {
                         "registry": "https://registry.ipe.wiki/registry.v1.json",
                         "id": "code-mirror"
                     },
+                    {
+                        "registry": "https://registry.ipe.wiki/registry.v1.json",
+                        "id": "april-fool-2026"
+                    }
                 ],
                 "pluginStore.registries": [
                     "https://registry.ipe.wiki/registry.v1.json"
