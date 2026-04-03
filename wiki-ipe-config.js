@@ -15,6 +15,7 @@ function summaryParser(template, payload) {
     }) ?? "[IPEN:edit]"
 }
 mw.hook('InPageEdit.ready').add(function (ipe) {
+    const apipath = mw.config.values.wgScript.replace(/index\.php$/,'api.php')
     ipe.plugin({
         inject: ['preferences', 'quickEdit'/* ,'inArticleLinks' */],
         name: "format-edit-summary",
@@ -106,25 +107,18 @@ mw.hook('InPageEdit.ready').add(function (ipe) {
                     if (pageName && !pageName.startsWith("Special:")) {
                         const divPrefix = document.createElement('div');
                         const divLink = document.createElement('div');
-                        if (!caches.prefix) {
+                        if (!caches.link) {
 
-                            fetch(`/api.php?${new URLSearchParams({
+                            fetch(`${apipath}?${new URLSearchParams({
                                 action: 'parse',
                                 format: 'json',
                                 contentmodel: 'wikitext',
-                                text: `{{Special:前缀索引/${pageName}}}`
-                            })}`).then(e => e.json()).then(t => divPrefix.innerHTML = caches.prefix = t.parse.text['*'])
+                                text: `{{Special:前缀索引/${pageName}}}THIS_IS_SPLIT{{Special:链入页面/${pageName}|limit=50|hidelinks=1}}`
+                            })}`).then(e => e.json()).then(t => {
+                                [divPrefix.innerHTML, divLink.innerHTML] = [caches.prefix,caches.link] = t.parse.text['*'].split('<p>THIS_IS_SPLIT</p>')
+                            })
                         } else {
                             divPrefix.innerHTML = caches.prefix;
-                        }
-                        if (!caches.link) {
-                            fetch(`/api.php?${new URLSearchParams({
-                                action: 'parse',
-                                format: 'json',
-                                contentmodel: 'wikitext',
-                                text: `{{Special:链入页面/${pageName}|limit=50|hidelinks=1}}`
-                            })}`).then(e => e.json()).then(t => divLink.innerHTML = caches.link = t.parse.text['*'])
-                        } else {
                             divLink.innerHTML = caches.link;
                         }
                         const divModalContent = document.createElement('div');
