@@ -61,6 +61,7 @@ mw.hook('InPageEdit.ready').add(function (ipe) {
             ctx.preferences.setMany({
                 "analytics.enabled": true,
                 "formatEditSummary.template": "[IPEN] /* ${section} */ ",
+                "inArticleLinks.quickEdit.redlinks": false,
                 "pluginStore.plugins": [
                     {
                         "registry": "https://registry.ipe.wiki/registry.v1.json",
